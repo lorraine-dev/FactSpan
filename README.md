@@ -47,11 +47,11 @@ The FactSpan dataset addresses limitations in existing multilingual fact-checkin
 
 To expand the `FactSpan.csv` dataset with new claims, follow these steps:
 
-1.  Clone the repository:
-    ```bash
-    git clone <repository_url>
-    cd FactSpan
-    ```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/lorraine-dev/FactSpan.git
+   cd FactSpan
+   ```
 2.  Navigate to the `scripts/expansion` directory:
     ```bash
     cd scripts/expansion
