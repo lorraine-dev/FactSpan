@@ -1,56 +1,81 @@
-# FactSpan Dataset and Expansion Scripts
+# FactSpan Dataset Expansion
 
-This repository contains the FactSpan dataset, a collection of fact-checked claims gathered from Google Fact Check Explorer and annotated with ClaimAnnotation Markup. Additionally, it provides scripts to expand and update this dataset with new claims.
+This repository contains the FactSpan dataset, an extension of the X-Fact dataset, designed to support multilingual fact-checking research. It includes tools to expand and update the dataset with recent claims from the ClaimReview Markup for Data Commons Feed.
 
-## Dataset Structure
+## Dataset Overview
 
-The repository includes two primary datasets:
+The FactSpan dataset addresses limitations in existing multilingual fact-checking datasets by incorporating recent data and providing detailed annotations. The dataset includes:
 
--   **FactSpan (data/FactSpan.csv):**
-    -      A basic dataset containing scraped claims and their corresponding fact-check information.
-    -      Designed for straightforward access and use in various natural language processing and fact-checking tasks.
--   **FactSpan_annotated (data/FactSpan_annotated.csv):**
-    -      An enriched version of FactSpan with additional features extracted using a Large Language Model (LLM).
-    -      Includes detailed annotations such as identified claim features (e.g., numerical data, quotes, etc.) and topic classification.
-    -      Offers deeper insights into the claims' linguistic and contextual properties.
+-   Claims from both the X-Fact dataset (up to 2020) and the Data Commons Feed (post-2020).
+-   Claims filtered from organizations recognized by the International Fact-Checking Network (IFCN) and Duke Reporters’ Lab, ensuring high reliability.
+-   Standardized verdict labels (False, Mostly False, Partly False/Misleading, Mostly True, True) for consistency.
+-   Rich annotations:
+    - Topic Extraction (Health and Pandemics, Politics and Governance, etc.)
+    - Claim Type Identification (factual or opinion)
+    - Additional key features (Numerical Claims, Quotes, Position Statements, Entity/Event Properties)
 
-## Dataset Location
+## Repository Structure
+````
+.
+├── Data
+│   ├── FactSpan.csv               # Original FactSpan dataset.
+│   ├── FactSpan_annotated.csv     # FactSpan dataset with annotations.
+│   └── ValidFactCheckers          # Lists of valid fact-checking organizations.
+│       ├── duke_list.txt
+│       └── ifcn_list.txt
+├── LICENSE
+├── README.md
+├── requirements.txt
+└── scripts
+    ├── annotation                 # Scripts for annotating the dataset.
+    │   ├── annotate_factspan.py  # Main annotation script.
+    │   ├── topic_extraction.py
+    │   ├── claim_type_extraction.py
+    │   ├── feature_extraction.py
+    │   └── logs                  # Annotation logs.
+    └── expansion                  # Scripts for expanding the dataset.
+        ├── data_processing.py    # Data processing utilities.
+        ├── fact_checker_utils.py # Fact-checker validation utilities.
+        ├── update_dataset.py     # Script to update the dataset.
+        ├── verdict_mapping.json  # Mapping of verdict labels.
+        └── verdict_prefix_mapping.json # Mapping of verdict prefix labels.
+````
+## Dataset Update Instructions
 
-Both datasets are located in the `data/` directory of this repository.
+### Option 1: Expanding the Unannotated Dataset (FactSpan.csv)
 
-## Expanding the Dataset
+To expand the `FactSpan.csv` dataset with new claims, follow these steps:
 
-To facilitate dataset expansion, this repository provides a script called `update_dataset.py`, located in the `scripts/expansion/` directory. This script allows you to append new claims to an existing dataset.
-
-### Usage
-
-1.  **Navigate to the `scripts/expansion/` directory:**
-
+1.  Clone the repository:
     ```bash
-    cd scripts/expansion/
+    git clone <repository_url>
+    cd FactSpan
+    ```
+2.  Navigate to the `scripts/expansion` directory:
+    ```bash
+    cd scripts/expansion
+    ```
+3.  Run the `update_dataset.py` script, specifying the path to `FactSpan.csv`:
+    ```bash
+    python update_dataset.py ../../Data/FactSpan.csv
     ```
 
-2.  **Run the `update_dataset.py` script, providing the path to your new claims CSV file as an argument:**
+This will update the `FactSpan.csv` file with the latest claims from the Data Commons Feed.
 
+### Option 2: Expanding the Annotated Dataset (FactSpan_annotated.csv)
+
+To expand the `FactSpan_annotated.csv` dataset, which requires LLM-based annotations, you need to configure your OpenAI API token:
+
+1.  Add your OpenAI API token to a `.env` file in the root directory. Create the `.env` file if it doesn't exist. Add the following line to the file, replacing `<your_openai_token>` with your actual token:
+    ```
+    OPENAI_API_KEY=<your_openai_token>
+    ```
+2.  Clone the repository and navigate to the `scripts/expansion` directory (as in Option 1).
+3.  Run the `update_dataset.py` script with the `--annotations` flag, specifying the path to `FactSpan_annotated.csv`:
     ```bash
-    python update_dataset.py ../../data/newclaims_nomedia.csv
+    python update_dataset.py ../../Data/FactSpan_annotated.csv --annotations
     ```
 
-    -      Replace `../../data/newclaims_nomedia.csv` with the actual path to your CSV file containing the new claims.
-    -   The script will append the new claims to the existing dataset.
+This will update the `FactSpan_annotated.csv` file with new claims and their corresponding annotations.
 
-### Requirements
-
--   Python 3.x
--   pandas library
-
-### Notes
-
--   Ensure that the input CSV file (`newclaims_nomedia.csv` in the example) is formatted correctly and contains the necessary columns to be compatible with the existing dataset structure.
--   The `update_dataset.py` script assumes that the new claims dataset has the same columns as the original dataset.
--   The script will append the rows of the new csv to the end of the existing csv.
--   Please check the script to ensure it fits your use case, and modify it if needed.
-
-## Contributing
-
-Contributions to improve the dataset or the expansion scripts are welcome. Please feel free to submit pull requests or open issues to discuss potential enhancements.
+**Note:** The `.env` file and the `scripts/annotation/logs` and `scripts/expansion/logs` directories are ignored by Git, as specified in the `.gitignore` file.
