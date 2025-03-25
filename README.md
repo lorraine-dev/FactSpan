@@ -3,7 +3,7 @@
 This repository contains the FactSpan dataset, an extension of the X-Fact dataset, designed to support multilingual fact-checking research. It includes tools to expand and update the dataset with recent claims from the ClaimReview Markup for Data Commons Feed.
 
 ## Dataset Overview
-[![DOI](https://zenodo.org/badge/10.5281/zenodo.15084387.svg)](https://doi.org/10.5281/zenodo.15084387)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15084388.svg)](https://doi.org/10.5281/zenodo.15084388)
 
 The FactSpan dataset addresses limitations in existing multilingual fact-checking datasets by incorporating recent data and providing detailed annotations. The dataset includes:
 
