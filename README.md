@@ -3,6 +3,7 @@
 This repository contains the FactSpan dataset, an extension of the X-Fact dataset, designed to support multilingual fact-checking research. It includes tools to expand and update the dataset with recent claims from the ClaimReview Markup for Data Commons Feed.
 
 ## Dataset Overview
+[![DOI](https://zenodo.org/badge/10.5281/zenodo.15084387.svg)](https://doi.org/10.5281/zenodo.15084387)
 
 The FactSpan dataset addresses limitations in existing multilingual fact-checking datasets by incorporating recent data and providing detailed annotations. The dataset includes:
 
@@ -77,5 +78,11 @@ To expand the `FactSpan_annotated.csv` dataset, which requires LLM-based annotat
     ```
 
 This will update the `FactSpan_annotated.csv` file with new claims and their corresponding annotations.
+## Dataset DOI
+
+The FactSpan dataset is available on Zenodo:
+
+* **Latest Version (Concept DOI):** [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387) (This DOI always points to the most recent version of the dataset.)
+* **Version 1.0.0:** [10.5281/zenodo.15084388](https://doi.org/10.5281/zenodo.15084388) (This DOI points to the specific version 1.0.0 of the dataset.)
 
 **Note:** The `.env` file and the `scripts/annotation/logs` and `scripts/expansion/logs` directories are ignored by Git, as specified in the `.gitignore` file.
