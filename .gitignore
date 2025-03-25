@@ -1,0 +1,5 @@
+.env
+.venv310
+.idea
+scripts/annotation/logs
+scripts/expansion/logs
