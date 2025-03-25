@@ -4,6 +4,10 @@ import json
 import sys
 from datetime import datetime
 import logging
+import subprocess
+import os
+import argparse
+import tempfile
 
 import fact_checker_utils
 import data_processing
@@ -11,14 +15,59 @@ import data_processing
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Import the annotate_dataset function
+# Get the absolute path of annotate_factspan.py
+annotate_factspan_path = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),  # scripts/expansion
+    "..",  # scripts
+    "annotation",
+    "annotate_factspan.py"
+)
+annotate_factspan_path = os.path.abspath(annotate_factspan_path)
+# Add the directory containing annotate_factspan.py to sys.path
+sys.path.append(os.path.dirname(annotate_factspan_path))
 
-def update_dataset(filepath):
+# Import annotate_factspan
+try:
+    import annotate_factspan as annotate_dataset_module
+except ImportError as e:
+    logging.error(f"Failed to import annotate_factspan.py: {e}")
+    annotate_dataset_module = None
+
+def annotate_new_claims(new_df, output_dir):
+    """Annotates new claims and returns the annotated DataFrame."""
+    if annotate_dataset_module is None:
+        logging.error("annotate_dataset.py not imported. Cannot perform annotation.")
+        return None
+
+    try:
+        with tempfile.NamedTemporaryFile(mode='w+t', delete=False, suffix='.csv') as temp_csv:
+            temp_csv_path = temp_csv.name
+            new_df.to_csv(temp_csv, index=False)
+        annotate_dataset_module.annotate_dataset(temp_csv_path, output_dir)
+        annotated_csv = temp_csv_path.replace('.csv', '_annotated.csv')
+        annotated_df = pd.read_csv(annotated_csv)
+        os.remove(annotated_csv)
+        os.remove(temp_csv_path) #remove the temp file.
+        logging.info(f"Annotation completed. Output: {annotated_csv}")
+        return annotated_df
+    except FileNotFoundError:
+        logging.error(f"File not found during annotation process.")
+        return None
+    except Exception as e:
+        logging.error(f"An unexpected error occurred during annotation: {e}")
+        return None
+
+def update_dataset(filepath, annotations = False):
     """Updates the dataset with new claims."""
     try:
         df = pd.read_csv(filepath)
-        df['claimDate'] = pd.to_datetime(df['claimDate'], errors='coerce')  # handle bad dates
+        # Handle mixed date formats, extracting only the date part
+        df['claimDate'] = df['claimDate'].apply(
+            lambda x: pd.to_datetime(x, errors='coerce').date() if pd.notna(x) and x != 'none' else None)
+        # df['claimDate'] = pd.to_datetime(df['claimDate'], errors='coerce')  # handle bad dates
         today = datetime.now().date()
-        latest_valid_date = df['claimDate'][df['claimDate'] < pd.to_datetime(today)].max().date()
+        latest_valid_date = df['claimDate'][df['claimDate'] < today].max()
         logging.info(f"Dataset last updated on: {latest_valid_date}")
     except FileNotFoundError:
         logging.error(f"File not found at {filepath}. Creating a new DataFrame.")
@@ -133,9 +182,20 @@ def update_dataset(filepath):
         logging.info(f"Values in the column, label in df: {df['label'].unique()}")
         logging.info(
             f"Non-standard labels in new_df: {new_df[~new_df['label'].isin(['False', 'Partly False/Misleading', 'Mostly False', 'Mostly True', 'True'])]['label'].unique()}")
-        df = pd.concat([df, new_df[['claim', 'claimDate', 'source', 'language', 'label', 'claim_reviewer_type', 'claim_reviewer_name', 'claim_reviewer_url', 'isValidFactChecker']]], ignore_index=True) # include source
-        logging.info(f"After appending, df has {len(df)} rows.")
-        new_df.to_csv('logs/temp_df.csv', index=False)
+        if annotations:
+            annotated_new_df = annotate_new_claims(new_df, os.path.dirname(os.path.abspath(filepath)))
+
+            if annotated_new_df is not None:
+                # Select only columns that are in df
+                common_columns = list(set(df.columns) & set(annotated_new_df.columns))
+                df = pd.concat([df, annotated_new_df[common_columns]], ignore_index=True)
+            else:
+                logging.error("Annotation failed. Appending unannotated data.")
+                df = pd.concat([df, new_df[['claim', 'claimDate', 'language', 'label']]], ignore_index=True)
+        else:
+            df = pd.concat([df, new_df[
+                ['claim', 'claimDate', 'language', 'label']]], ignore_index=True)  # include source
+        df.to_csv('logs/temp_df.csv', index=False)
         # logging.info(f"Dataset updated successfully. {len(new_df)} new claims added.")
 
         # Filter only valid fact checkers from the entire dataframe
@@ -145,8 +205,9 @@ def update_dataset(filepath):
         logging.info("No new claims found.")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python update_dataset.py <filepath>")
-    else:
-        filepath = sys.argv[1]
-        update_dataset(filepath)
+    parser = argparse.ArgumentParser(description="Update dataset with new claims, optionally annotating them.")
+    parser.add_argument("filepath", help="Path to the dataset CSV file.")
+    parser.add_argument("--annotations", action="store_true", help="Annotate new claims.")
+    args = parser.parse_args()
+
+    update_dataset(args.filepath, args.annotations)
