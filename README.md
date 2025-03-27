@@ -16,7 +16,7 @@ The FactSpan dataset addresses limitations in existing multilingual fact-checkin
     - Additional key features (Numerical Claims, Quotes, Position Statements, Entity/Event Properties)
 
 ## Repository Structure
-````
+```
 .
 ├── Data
 │   ├── FactSpan.csv               # Original FactSpan dataset.
@@ -40,7 +40,7 @@ The FactSpan dataset addresses limitations in existing multilingual fact-checkin
         ├── update_dataset.py     # Script to update the dataset.
         ├── verdict_mapping.json  # Mapping of verdict labels.
         └── verdict_prefix_mapping.json # Mapping of verdict prefix labels.
-````
+```
 
 ## Valid Fact-Checking Organizations
 
