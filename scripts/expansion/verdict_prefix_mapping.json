@@ -8,5 +8,9 @@
     "False": "False",
     "The claim by the user is FALSE": "False",
     "The claim is Misleading": "Partly False/Misleading",
-    "This claim is FALSE": "False"
+    "This claim is FALSE": "False", 
+    "This is wrong.": "False",
+    "This is a false claim.": "False",
+    "This is untrue": "False",
+    "It is misleading": "Partly False/Misleading"
 }

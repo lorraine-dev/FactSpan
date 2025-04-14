@@ -46,6 +46,7 @@
     "خاطئ ": "False",
     "Netočno, Dezinformacija": "False",
     "خطأ": "False",
+    "Es falso": "False",
 
 
     "Mostly False": "Mostly False",
@@ -90,6 +91,7 @@
     "Cherry picking": "Partly False/Misleading",
     "This is misleading. ": "Partly False/Misleading",
     "سياق ناقص": "Partly False/Misleading",
+    "Partly false": "Partly False/Misleading",
 
 
     "Mostly True": "Mostly True",
