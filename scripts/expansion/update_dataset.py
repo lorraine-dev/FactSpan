@@ -195,12 +195,8 @@ def update_dataset(filepath, annotations = False):
         else:
             df = pd.concat([df, new_df[
                 ['claim', 'claimDate', 'language', 'label']]], ignore_index=True)  # include source
-        df.to_csv('logs/temp_df.csv', index=False)
-        # logging.info(f"Dataset updated successfully. {len(new_df)} new claims added.")
-
-        # Filter only valid fact checkers from the entire dataframe
-        # df = df[df['isValidFactChecker'] == True]
-        # df.to_csv(filepath, index=False)
+        # df.to_csv('logs/temp_df.csv', index=False)
+        df.to_csv(filepath, index=False)
     else:
         logging.info("No new claims found.")
 
