@@ -151,3 +151,7 @@ The FactSpan dataset is available on Zenodo:
 * **Version 1.0.0:** [10.5281/zenodo.15084388](https://doi.org/10.5281/zenodo.15084388) (This DOI points to the specific version 1.0.0 of the dataset.)
 
 **Note:** The `.env` file and the `scripts/annotation/logs` and `scripts/expansion/logs` directories are ignored by Git, as specified in the `.gitignore` file.
+
+---
+
+This work was partially funded by the German Research Foundation (DFG) under project No. 504226141.
