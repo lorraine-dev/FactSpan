@@ -3,3 +3,25 @@
 .idea
 scripts/annotation/logs
 scripts/expansion/logs
+venv/
+venv/bin/accelerate
+scripts/__init__.py
+scripts/annotation/__init__.py
+
+# OS / build junk
+.DS_Store
+__pycache__/
+README.html
+README_files/
+
+# Local pipeline outputs / test fixtures (not canonical dataset)
+Data/defensible_sample.csv
+Data/newclaims_nomedia.csv
+Data/newclaims_nomedia_annotated_ct.csv
+Data/newclaims_nomedia_annotated_topics.csv
+Data/newclaims_nomedia_features_extracted.csv
+Data/results_phase2.csv
+Data/results_phase2_annotated.csv
+Data/test_annotated.csv
+Data/testclaims.csv
+Claudia validation subset.xlsx
