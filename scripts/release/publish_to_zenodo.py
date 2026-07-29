@@ -95,6 +95,11 @@ def publish(api_base, token, record_id, version, description, publication_date, 
 
     print(f"Creating new version draft from record {record_id}...")
     r = session.post(f"{api_base}/deposit/depositions/{record_id}/actions/newversion")
+    if r.status_code == 400:
+        # A draft already exists (newversion errors instead of returning it);
+        # the original record's own metadata still links to it.
+        print("A draft already exists for this record; reusing it.")
+        r = session.get(f"{api_base}/deposit/depositions/{record_id}")
     r.raise_for_status()
     draft_url = r.json()["links"]["latest_draft"]
     draft_id = draft_url.rstrip("/").split("/")[-1]
