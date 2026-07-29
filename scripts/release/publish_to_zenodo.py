@@ -8,10 +8,13 @@ in that concept's version chain.
 import argparse
 import os
 import sys
+import time
 
 import requests
 
 ZENODO_API = "https://zenodo.org/api"
+UPLOAD_RETRIES = 3
+UPLOAD_RETRY_BACKOFF_SECONDS = 5
 
 
 def publish(api_base, token, record_id, version, description, publication_date, files, dry_run):
@@ -40,10 +43,18 @@ def publish(api_base, token, record_id, version, description, publication_date, 
     bucket_url = draft["links"]["bucket"]
     for path in files:
         filename = os.path.basename(path)
-        print(f"Uploading {filename}...")
-        with open(path, "rb") as fh:
-            ur = session.put(f"{bucket_url}/{filename}", data=fh)
-            ur.raise_for_status()
+        for attempt in range(1, UPLOAD_RETRIES + 1):
+            print(f"Uploading {filename} (attempt {attempt}/{UPLOAD_RETRIES})...")
+            try:
+                with open(path, "rb") as fh:
+                    ur = session.put(f"{bucket_url}/{filename}", data=fh)
+                    ur.raise_for_status()
+                break
+            except (requests.exceptions.ConnectionError, requests.exceptions.SSLError) as exc:
+                if attempt == UPLOAD_RETRIES:
+                    raise
+                print(f"Upload failed ({exc}); retrying in {UPLOAD_RETRY_BACKOFF_SECONDS}s...")
+                time.sleep(UPLOAD_RETRY_BACKOFF_SECONDS)
 
     metadata = draft["metadata"]
     metadata.update(
