@@ -138,6 +138,28 @@ The FactSpan dataset is available on Zenodo:
 * **Latest Version (Concept DOI):** [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387) (This DOI always points to the most recent version of the dataset.)
 * **Version 1.0.0:** [10.5281/zenodo.15084388](https://doi.org/10.5281/zenodo.15084388) (This DOI points to the specific version 1.0.0 of the dataset.)
 
+## Releasing a New Version
+
+FactSpan uses [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`) for dataset releases:
+
+-   **MAJOR** — schema or label-scheme changes (e.g. a new verdict taxonomy, added/removed/renamed CSV columns).
+-   **MINOR** — a routine data pull that adds new claims (e.g. running `update_dataset.py` against the Data Commons feed).
+-   **PATCH** — corrections to existing rows (e.g. removing an invalid claim, fixing a date) with no new data added.
+
+### Release steps
+
+1.  Merge the dataset/code changes for the release into the default branch.
+2.  Update the `version` and `date-released` fields in [`CITATION.cff`](./CITATION.cff) and add an entry to [`CHANGELOG.md`](./CHANGELOG.md).
+3.  Tag the release commit:
+    ```bash
+    git tag -a vX.Y.Z -m "vX.Y.Z: <short summary>"
+    git push origin vX.Y.Z
+    ```
+4.  Create a GitHub Release from that tag (repository → Releases → "Draft a new release" on github.com). Use the CHANGELOG entry as release notes.
+5.  Publishing the GitHub Release triggers Zenodo (via the GitHub webhook) to mint a new version snapshot under the same concept DOI: **10.5281/zenodo.15084387**.
+
+The concept DOI always resolves to the latest released version.
+
 **Note:** The `.env` file and the `scripts/annotation/logs` and `scripts/expansion/logs` directories are ignored by Git, as specified in the `.gitignore` file.
 
 ---

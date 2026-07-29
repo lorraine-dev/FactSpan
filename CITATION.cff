@@ -1,0 +1,25 @@
+# This CITATION.cff file was generated to enable GitHub's "Cite this repository"
+# feature and to drive the Zenodo GitHub integration (see README "Releasing a
+# New Version" section). Keep the `version` and `date-released` fields in sync
+# with each tagged GitHub Release.
+cff-version: 1.2.0
+message: "If you use this dataset or software, please cite it as below."
+title: "FactSpan: A Multilingual Fact-Checking Dataset"
+type: dataset
+authors:
+  - family-names: "Saju"
+    given-names: "Lorraine"
+    orcid: "https://orcid.org/0009-0003-3168-9672"
+  # TODO: add any additional co-authors/contributors here
+version: "1.1.0"
+date-released: "2025-04-14"
+doi: "10.5281/zenodo.15084387"
+repository-code: "https://github.com/lorraine-dev/FactSpan"
+url: "https://github.com/lorraine-dev/FactSpan"
+license: MIT
+keywords:
+  - fact-checking
+  - misinformation
+  - dataset
+  - natural-language-processing
+  - claim-verification
