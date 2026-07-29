@@ -50,15 +50,20 @@ jobs:
       - name: Publish to Zenodo
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_BODY: ${{ steps.release.outputs.body }}
+          RELEASE_DATE: ${{ steps.release.outputs.published_at }}
+          SANDBOX: ${{ github.event.inputs.sandbox }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           ARGS=(--record-id 15084388
-                --version "${{ steps.release.outputs.tag }}"
-                --description "${{ steps.release.outputs.body }}"
-                --publication-date "${{ steps.release.outputs.published_at }}")
-          if [ "${{ github.event.inputs.sandbox }}" = "true" ]; then
+                --version "$RELEASE_TAG"
+                --description "$RELEASE_BODY"
+                --publication-date "$RELEASE_DATE")
+          if [ "$SANDBOX" = "true" ]; then
             ARGS+=(--sandbox)
           fi
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          if [ "$DRY_RUN" = "true" ]; then
             ARGS+=(--dry-run)
           fi
           python scripts/release/publish_to_zenodo.py "${ARGS[@]}" \
