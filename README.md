@@ -138,6 +138,8 @@ The FactSpan dataset is available on Zenodo:
 * **Latest Version (Concept DOI):** [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387) (This DOI always points to the most recent version of the dataset.)
 * **Version 1.0.0:** [10.5281/zenodo.15084388](https://doi.org/10.5281/zenodo.15084388) (This DOI points to the specific version 1.0.0 of the dataset.)
 
+**Note:** Zenodo's default GitHub integration archives an entire repository as a new, unrelated concept DOI rather than a new version of an existing one, and can't be scoped to specific files. A one-time test of that integration produced [10.5281/zenodo.21670252](https://doi.org/10.5281/zenodo.21670252) — this is **not** part of the FactSpan dataset's citable history and should be disregarded. The canonical lineage is, and remains, concept DOI **10.5281/zenodo.15084387**.
+
 ## Releasing a New Version
 
 FactSpan uses [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`) for dataset releases:
@@ -156,7 +158,7 @@ FactSpan uses [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`) 
     git push origin vX.Y.Z
     ```
 4.  Create a GitHub Release from that tag (repository → Releases → "Draft a new release" on github.com). Use the CHANGELOG entry as release notes.
-5.  Publishing the GitHub Release triggers Zenodo (via the GitHub webhook) to mint a new version snapshot under the same concept DOI: **10.5281/zenodo.15084387**.
+5.  Publishing the GitHub Release triggers the [`zenodo-release.yml`](./.github/workflows/zenodo-release.yml) GitHub Actions workflow, which publishes only `Data/FactSpan.csv` and `Data/FactSpan_annotated.csv` as a new version of the existing concept DOI: **10.5281/zenodo.15084387**. (This replaced Zenodo's default whole-repo GitHub integration — see the note above.)
 
 The concept DOI always resolves to the latest released version.
 

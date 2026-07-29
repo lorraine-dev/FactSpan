@@ -13,6 +13,15 @@ This project uses [Semantic Versioning](https://semver.org/).
 ### Fixed
 - Two invalid rows removed in the lead-up to this release.
 
+> **Zenodo archival note:** the GitHub Release for this version was
+> initially published before the [`zenodo-release.yml`](./.github/workflows/zenodo-release.yml)
+> workflow existed, so Zenodo's default (whole-repo) integration archived
+> it as an unrelated concept DOI, [10.5281/zenodo.21670252](https://doi.org/10.5281/zenodo.21670252).
+> That record is not part of this dataset's citable history. This
+> version's proper archive, as a new version of concept
+> [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387), is
+> pending a manual `workflow_dispatch` backfill run.
+
 ## [1.0.0] - 2025-03-25
 ### Added
 - Initial public release of the FactSpan dataset (`FactSpan.csv` and
