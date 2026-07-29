@@ -26,7 +26,8 @@ The FactSpan dataset addresses limitations in existing multilingual fact-checkin
 │       └── ifcn_list.txt
 ├── LICENSE
 ├── README.md
-├── requirements.txt
+├── pyproject.toml
+├── uv.lock
 └── scripts
     ├── annotation                 # Scripts for annotating the dataset.
     │   ├── annotate_factspan.py  # Main annotation script.
@@ -55,15 +56,11 @@ To ensure proper execution of the scripts in this repository, follow these steps
 
 ### Prerequisites
 
-* **Python 3.10 or higher:** This project was developed and tested using Python 3.10. While it might be compatible with other Python 3 versions, we recommend using Python 3.10 or a more recent version to avoid potential compatibility issues. You can check your Python version by running:
-    ```bash
-    python --version
-    ```
-    Ensure the output is `Python 3.10.x` or higher.
+* **Python 3.10 or higher:** This project was developed and tested using Python 3.10. While it might be compatible with other Python 3 versions, we recommend using Python 3.10 or a more recent version to avoid potential compatibility issues.
 
-* **pip:** Python's package installer. It usually comes bundled with Python installations. You can check if it's installed by running:
+* **[uv](https://docs.astral.sh/uv/):** This project uses `uv` for dependency management and virtual environments. Install it by following the [official installation instructions](https://docs.astral.sh/uv/getting-started/installation/). You can check if it's installed by running:
     ```bash
-    pip --version
+    uv --version
     ```
 
 ### Installation
@@ -74,39 +71,30 @@ To ensure proper execution of the scripts in this repository, follow these steps
     cd FactSpan
     ```
 
-2.  **Create a virtual environment:**
-    It is highly recommended to use a virtual environment to isolate the project's dependencies.
+2.  **Create the virtual environment and install dependencies:**
     ```bash
-    python -m venv venv
+    uv sync --python 3.10
     ```
-    This command creates a directory named `venv` in your project directory.
+    This creates a `.venv` directory and installs the exact dependency versions pinned in `uv.lock`.
 
 3.  **Activate the virtual environment:**
-    Activate the virtual environment before installing dependencies. The activation command depends on your operating system:
 
     * **On macOS and Linux:**
         ```bash
-        source venv/bin/activate
+        source .venv/bin/activate
         ```
 
     * **On Windows (Command Prompt):**
         ```bash
-        venv\Scripts\activate
+        .venv\Scripts\activate
         ```
 
     * **On Windows (PowerShell):**
         ```powershell
-        .\venv\Scripts\Activate.ps1
+        .\.venv\Scripts\Activate.ps1
         ```
 
-    Once activated, you should see `(venv)` at the beginning of your terminal prompt.
-
-4.  **Install the project dependencies:**
-    Navigate to the root directory of the project (if you're not already there) and run the following command to install all the required packages listed in the `requirements.txt` file:
-    ```bash
-    pip install -r requirements.txt
-    ```
-    This command will install the specific versions of the libraries that this project depends on.
+    Once activated, you should see `(FactSpan)` at the beginning of your terminal prompt. Alternatively, you can skip activation and prefix commands with `uv run`, e.g. `uv run python update_dataset.py ...`.
 
 ## Dataset Update Instructions
 

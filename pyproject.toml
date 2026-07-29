@@ -1,0 +1,14 @@
+[project]
+name = "factspan"
+version = "0.1.0"
+description = "FactSpan dataset expansion and annotation tooling"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai==2.50.0",
+    "pandas==2.3.3",
+    "numpy==2.2.6",
+    "requests==2.34.2",
+    "python-dotenv==1.2.2",
+    "langdetect==1.0.9",
+]

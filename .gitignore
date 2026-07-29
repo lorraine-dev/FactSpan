@@ -3,8 +3,7 @@
 .idea
 scripts/annotation/logs
 scripts/expansion/logs
-venv/
-venv/bin/accelerate
+.venv/
 scripts/__init__.py
 scripts/annotation/__init__.py
 
