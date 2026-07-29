@@ -207,11 +207,6 @@ def main():
     parser.add_argument("--description", required=True)
     parser.add_argument("--publication-date", required=True, help="ISO date/datetime; truncated to YYYY-MM-DD")
     parser.add_argument(
-        "--sandbox",
-        action="store_true",
-        help="Use sandbox.zenodo.org instead of production zenodo.org",
-    )
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Prepare the new version draft but stop before publishing",
@@ -222,10 +217,8 @@ def main():
     if not token:
         sys.exit("ZENODO_TOKEN environment variable is required")
 
-    api_base = "https://sandbox.zenodo.org/api" if args.sandbox else ZENODO_API
-
     publish(
-        api_base=api_base,
+        api_base=ZENODO_API,
         token=token,
         record_id=args.record_id,
         version=args.version,

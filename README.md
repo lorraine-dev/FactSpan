@@ -3,7 +3,7 @@
 This repository contains the FactSpan dataset, an extension of the X-Fact dataset, designed to support multilingual fact-checking research. It includes tools to expand and update the dataset with recent claims from the ClaimReview Markup for Data Commons Feed.
 
 ## Dataset Overview
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15084388.svg)](https://doi.org/10.5281/zenodo.15084388)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15084387.svg)](https://doi.org/10.5281/zenodo.15084387)
 
 The FactSpan dataset addresses limitations in existing multilingual fact-checking datasets by incorporating recent data and providing detailed annotations. The dataset includes:
 
@@ -169,7 +169,6 @@ The workflow can also be triggered manually (Actions → "Publish dataset to Zen
 
 -   **`tag`**: the release tag to (re)publish (must already exist, e.g. `v1.1.0`).
 -   **`dry_run`**: prepares the new-version draft — new files uploaded, metadata updated — but stops before the final publish, so you can review it on Zenodo first. Safe to run repeatedly.
--   **`sandbox`**: points at `sandbox.zenodo.org` instead of production, if a completely separate throwaway environment is preferred over `dry_run`.
 
 If a run fails partway through, it's safe to just re-run it: the script detects an existing unpublished draft for the same concept DOI and continues from there rather than erroring or duplicating it. Zenodo's API is occasionally flaky (transient 5xx errors, dropped connections mid-upload) — the script retries these automatically, but a run can still fail outright; simply re-running it is the expected recovery path, no manual Zenodo cleanup needed.
 

@@ -8,10 +8,6 @@ on:
       tag:
         description: "Release tag to (re)publish to Zenodo"
         required: true
-      sandbox:
-        description: "Publish to sandbox.zenodo.org instead of production"
-        type: boolean
-        default: false
       dry_run:
         description: "Prepare the Zenodo draft but don't publish"
         type: boolean
@@ -60,16 +56,12 @@ jobs:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
           RELEASE_BODY: ${{ steps.release.outputs.body }}
           RELEASE_DATE: ${{ steps.release.outputs.published_at }}
-          SANDBOX: ${{ github.event.inputs.sandbox }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           ARGS=(--record-id 15084388
                 --version "$RELEASE_TAG"
                 --description "$RELEASE_BODY"
                 --publication-date "$RELEASE_DATE")
-          if [ "$SANDBOX" = "true" ]; then
-            ARGS+=(--sandbox)
-          fi
           if [ "$DRY_RUN" = "true" ]; then
             ARGS+=(--dry-run)
           fi
