@@ -86,6 +86,26 @@ def changelog_to_html(text):
     return "".join(parts)
 
 
+def find_existing_draft(session, api_base, record_id):
+    """Find a pending unpublished draft for the same concept as record_id.
+
+    The newversion action's own links.latest_draft is only reliable on the
+    response of a *successful* newversion call. A plain GET on the original
+    (published) deposition does not reliably expose the same link, so
+    instead search the account's own draft depositions by conceptrecid.
+    """
+    r = session.get(f"{api_base}/deposit/depositions/{record_id}")
+    r.raise_for_status()
+    concept_id = r.json().get("conceptrecid")
+
+    r = session.get(f"{api_base}/deposit/depositions", params={"status": "draft", "size": 100})
+    r.raise_for_status()
+    for dep in r.json():
+        if dep.get("conceptrecid") == concept_id:
+            return dep["links"]["self"]
+    return None
+
+
 def publish(api_base, token, record_id, version, description, publication_date, files, dry_run):
     session = requests.Session()
     session.headers.update({"Authorization": f"Bearer {token}"})
@@ -96,12 +116,16 @@ def publish(api_base, token, record_id, version, description, publication_date, 
     print(f"Creating new version draft from record {record_id}...")
     r = session.post(f"{api_base}/deposit/depositions/{record_id}/actions/newversion")
     if r.status_code == 400:
-        # A draft already exists (newversion errors instead of returning it);
-        # the original record's own metadata still links to it.
-        print("A draft already exists for this record; reusing it.")
-        r = session.get(f"{api_base}/deposit/depositions/{record_id}")
-    r.raise_for_status()
-    draft_url = r.json()["links"]["latest_draft"]
+        print("A draft already exists for this record; searching for it...")
+        draft_url = find_existing_draft(session, api_base, record_id)
+        if draft_url is None:
+            raise RuntimeError(
+                "newversion returned 400 (draft already exists) but no matching "
+                "draft was found among this account's drafts."
+            )
+    else:
+        r.raise_for_status()
+        draft_url = r.json()["links"]["latest_draft"]
     draft_id = draft_url.rstrip("/").split("/")[-1]
     print(f"Draft deposition id: {draft_id}")
 
