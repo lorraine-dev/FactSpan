@@ -6,7 +6,9 @@ new version of an existing concept, identified by any prior deposition id
 in that concept's version chain.
 """
 import argparse
+import html
 import os
+import re
 import sys
 import time
 
@@ -15,6 +17,73 @@ import requests
 ZENODO_API = "https://zenodo.org/api"
 UPLOAD_RETRIES = 3
 UPLOAD_RETRY_BACKOFF_SECONDS = 5
+
+
+def _inline_html(text):
+    escaped = html.escape(text)
+    return re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
+
+
+def changelog_to_html(text):
+    """Convert our CHANGELOG's Markdown-ish structure to HTML.
+
+    Zenodo's description field renders as HTML, not Markdown, so plain
+    newlines collapse unless wrapped in real block tags. Soft-wrapped
+    continuation lines (no blank line, no new header/bullet) are joined
+    into the block they continue, matching Markdown's lazy-continuation
+    convention.
+    """
+    parts = []
+    in_list = False
+    state = None  # 'li', 'p', or None
+    buffer = []
+
+    def flush():
+        nonlocal buffer
+        if buffer:
+            content = _inline_html(" ".join(buffer))
+            tag = "li" if state == "li" else "p"
+            parts.append(f"<{tag}>{content}</{tag}>")
+            buffer = []
+
+    for raw_line in text.strip().splitlines():
+        line = raw_line.strip()
+        if not line:
+            flush()
+            state = None
+            continue
+
+        header = re.match(r"^(#{1,6})\s+(.*)", line)
+        bullet = re.match(r"^[-*]\s+(.*)", line)
+
+        if header:
+            flush()
+            if in_list:
+                parts.append("</ul>")
+                in_list = False
+            level = min(len(header.group(1)) + 1, 6)
+            parts.append(f"<h{level}>{_inline_html(header.group(2))}</h{level}>")
+            state = None
+        elif bullet:
+            flush()
+            if not in_list:
+                parts.append("<ul>")
+                in_list = True
+            state = "li"
+            buffer = [bullet.group(1)]
+        elif state in ("li", "p"):
+            buffer.append(line)
+        else:
+            if in_list:
+                parts.append("</ul>")
+                in_list = False
+            state = "p"
+            buffer = [line]
+
+    flush()
+    if in_list:
+        parts.append("</ul>")
+    return "".join(parts)
 
 
 def publish(api_base, token, record_id, version, description, publication_date, files, dry_run):
@@ -60,7 +129,7 @@ def publish(api_base, token, record_id, version, description, publication_date, 
     metadata.update(
         {
             "version": version,
-            "description": description or metadata.get("description"),
+            "description": changelog_to_html(description) if description else metadata.get("description"),
             "publication_date": pub_date,
         }
     )
