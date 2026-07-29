@@ -13,10 +13,34 @@ import sys
 import time
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 ZENODO_API = "https://zenodo.org/api"
 UPLOAD_RETRIES = 3
 UPLOAD_RETRY_BACKOFF_SECONDS = 5
+
+
+def make_session(token):
+    """A session that retries transient 5xx errors on GET/POST/DELETE.
+
+    PUT (file upload) is deliberately excluded: it streams a file object as
+    the request body, and the upload loop below already retries those by
+    reopening the file fresh, which a body-preserving low-level retry
+    can't do safely.
+    """
+    session = requests.Session()
+    session.headers.update({"Authorization": f"Bearer {token}"})
+    retry = Retry(
+        total=3,
+        backoff_factor=2,
+        status_forcelist=(500, 502, 503, 504),
+        allowed_methods=frozenset(["GET", "POST", "DELETE"]),
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
 
 
 def _inline_html(text):
@@ -107,8 +131,7 @@ def find_existing_draft(session, api_base, record_id):
 
 
 def publish(api_base, token, record_id, version, description, publication_date, files, dry_run):
-    session = requests.Session()
-    session.headers.update({"Authorization": f"Bearer {token}"})
+    session = make_session(token)
 
     version = version.lstrip("vV")
     pub_date = publication_date[:10]
