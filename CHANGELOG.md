@@ -17,10 +17,11 @@ This project uses [Semantic Versioning](https://semver.org/).
 > initially published before the [`zenodo-release.yml`](./.github/workflows/zenodo-release.yml)
 > workflow existed, so Zenodo's default (whole-repo) integration archived
 > it as an unrelated concept DOI, [10.5281/zenodo.21670252](https://doi.org/10.5281/zenodo.21670252).
-> That record is not part of this dataset's citable history. This
-> version's proper archive, as a new version of concept
-> [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387), is
-> pending a manual `workflow_dispatch` backfill run.
+> That record is not part of this dataset's citable history. This version
+> was subsequently backfilled via a manual `workflow_dispatch` run of
+> `zenodo-release.yml` and is properly archived as
+> [10.5281/zenodo.21671356](https://doi.org/10.5281/zenodo.21671356), a new
+> version of concept [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387).
 
 ## [1.0.0] - 2025-03-25
 ### Added

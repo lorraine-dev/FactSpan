@@ -137,6 +137,7 @@ The FactSpan dataset is available on Zenodo:
 
 * **Latest Version (Concept DOI):** [10.5281/zenodo.15084387](https://doi.org/10.5281/zenodo.15084387) (This DOI always points to the most recent version of the dataset.)
 * **Version 1.0.0:** [10.5281/zenodo.15084388](https://doi.org/10.5281/zenodo.15084388) (This DOI points to the specific version 1.0.0 of the dataset.)
+* **Version 1.1.0:** [10.5281/zenodo.21671356](https://doi.org/10.5281/zenodo.21671356) (This DOI points to the specific version 1.1.0 of the dataset.)
 
 **Note:** Zenodo's default GitHub integration archives an entire repository as a new, unrelated concept DOI rather than a new version of an existing one, and can't be scoped to specific files. A one-time test of that integration produced [10.5281/zenodo.21670252](https://doi.org/10.5281/zenodo.21670252) — this is **not** part of the FactSpan dataset's citable history and should be disregarded. The canonical lineage is, and remains, concept DOI **10.5281/zenodo.15084387**.
 
@@ -158,9 +159,19 @@ FactSpan uses [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`) 
     git push origin vX.Y.Z
     ```
 4.  Create a GitHub Release from that tag (repository → Releases → "Draft a new release" on github.com). Use the CHANGELOG entry as release notes.
-5.  Publishing the GitHub Release triggers the [`zenodo-release.yml`](./.github/workflows/zenodo-release.yml) GitHub Actions workflow, which publishes only `Data/FactSpan.csv` and `Data/FactSpan_annotated.csv` as a new version of the existing concept DOI: **10.5281/zenodo.15084387**. (This replaced Zenodo's default whole-repo GitHub integration — see the note above.)
+5.  Publishing the GitHub Release automatically triggers the [`zenodo-release.yml`](./.github/workflows/zenodo-release.yml) GitHub Actions workflow, which publishes only `Data/FactSpan.csv` and `Data/FactSpan_annotated.csv` as a new version of the existing concept DOI: **10.5281/zenodo.15084387**. No manual Zenodo step is needed — this replaced Zenodo's default whole-repo GitHub integration (see the note above), which archives the entire repo as an unrelated new concept DOI and can't be scoped to specific files.
 
 The concept DOI always resolves to the latest released version.
+
+### Testing or re-running a release
+
+The workflow can also be triggered manually (Actions → "Publish dataset to Zenodo" → Run workflow) for testing or backfilling a specific tag:
+
+-   **`tag`**: the release tag to (re)publish (must already exist, e.g. `v1.1.0`).
+-   **`dry_run`**: prepares the new-version draft — new files uploaded, metadata updated — but stops before the final publish, so you can review it on Zenodo first. Safe to run repeatedly.
+-   **`sandbox`**: points at `sandbox.zenodo.org` instead of production, if a completely separate throwaway environment is preferred over `dry_run`.
+
+If a run fails partway through, it's safe to just re-run it: the script detects an existing unpublished draft for the same concept DOI and continues from there rather than erroring or duplicating it. Zenodo's API is occasionally flaky (transient 5xx errors, dropped connections mid-upload) — the script retries these automatically, but a run can still fail outright; simply re-running it is the expected recovery path, no manual Zenodo cleanup needed.
 
 **Note:** The `.env` file and the `scripts/annotation/logs` and `scripts/expansion/logs` directories are ignored by Git, as specified in the `.gitignore` file.
 
